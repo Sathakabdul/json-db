@@ -29,9 +29,12 @@ export const createPost = async (post: Post): Promise<void> => {
   await writeData(posts);
 };
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'GET') {
-    const posts = getPosts();
+    const posts = await getPosts();
     res.status(200).json(posts);
   } else if (req.method === 'POST') {
     const { title, content } = req.body;

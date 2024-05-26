@@ -12,26 +12,35 @@ interface Post {
 const filePath = `${process.cwd()}/pages/api/items.json`;
 const readData = async (): Promise<Post[]> => {
   const data = await fs.readFile(filePath, 'utf-8');
+  console.log(data);
   return JSON.parse(data);
 };
 
 const writeData = async (data: Post[]): Promise<void> => {
+  console.log('Write Data ', data);
   await fs.writeFile(filePath, JSON.stringify(data, null, 2));
 };
 
 export const getPosts = async (): Promise<Post[]> => {
-  return await readData();
+  const a = await readData();
+  console.log(a);
+  return a;
 };
 
 export const createPost = async (post: Post): Promise<void> => {
   const posts = await readData();
+  console.log('Create Post get existing post', posts);
   posts.push(post);
   await writeData(posts);
 };
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'GET') {
-    const posts = getPosts();
+    const posts = await getPosts();
+    console.log(posts);
     res.status(200).json(posts);
   } else if (req.method === 'POST') {
     const { title, content } = req.body;
